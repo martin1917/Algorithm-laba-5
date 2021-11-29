@@ -1,14 +1,6 @@
 public class App {
     public static void main(String[] args) throws Exception {
-        int[] arr = new int[]{29,68,52,12,66,89,57,20,97,21};
-        Solution.SortByInserts(arr);
-        print(arr);
-    }
-
-    public static void print(int[] arr) {
-        for(int item : arr) {
-            System.out.print(item + " ");
-        }
-        System.out.println();
+        int[] arr = new int[]{8, 3, 5, 3, 9, 1, 8, 4, 3, 1};
+        Solution.LinearSort(arr);
     }
 }

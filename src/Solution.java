@@ -102,18 +102,43 @@ public class Solution {
             }
         }
     }
+
+    public static void SortShell(int[] arr) {
+        //кол-во проходов (Н. Вирт)
+        final int t = (int)(Math.log(arr.length) / Math.log(2)) - 1;
+
+        //шаги (h[t-1] = 1; h[k-1] = 2h[k] + 1)
+        int[] steps = new int[t];
+        steps[t - 1] = 1;
+        for (int i = t - 2; i >= 0; i--) {
+            steps[i] = 2*steps[i+1] + 1;
+        }
+
+        for(int k = 0; k < steps.length; k++) {
+            int i, j;
+            int step = steps[k];
+            for (i = step; i < arr.length; i++) {
+                int value = arr[i];
+                for (j = i - step; (j >= 0) && (arr[j] > value); j -= step) {
+                    arr[j + step] = arr[j];
+                }
+                arr[j + step] = value;
+            }
+        }
+    }
+
+    public static void LinearSort(int[] arr) {
+        int[] temp = new int[arr.length];
+        for (int i = 0; i < arr.length; i++) {
+            temp[arr[i]] += 1;
+        }
+        
+        int index = 0;
+        for(int i = 0; i < temp.length; i++) {
+            for(int j = 0; j < temp[i]; j++) {
+                arr[index] = i;
+                index++;
+            }
+        }
+    }
 }
-
-// public static void sortLinear(int[] arr, int start, int end) {
-
-//     for(int i = start + 1; i < end; i++) {
-//         int value = arr[i];
-//         int index = i;
-//         while((index > 0) && (arr[index - 1] > value)) {
-//             arr[index] = arr[index - 1];
-//             index--;
-//         }
-//         arr[index] = value;
-//     }
-
-// }
