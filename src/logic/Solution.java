@@ -1,3 +1,5 @@
+package logic;
+
 public class Solution {
     public static void BubbleSort(int[] arr) {
         int last = arr.length - 1;
