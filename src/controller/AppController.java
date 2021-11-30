@@ -1,12 +1,9 @@
 package controller;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
+import Data.InfoAboutSort;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -16,9 +13,11 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.control.TableView;
 import javafx.util.Callback;
+import logic.Solution;
 import logic.SolutionWithInfo;
 import logic.SortMethod;
 
@@ -26,21 +25,36 @@ public class AppController {
 
     @FXML private TableView<List<Integer>> bubbleTable;
     @FXML private Button btnBubble;
+
     @FXML private TableView<List<Integer>> selectTable;
     @FXML private Button btnSelect;
+
     @FXML private TableView<List<Integer>> insertTable;
     @FXML private Button btnInsert;
+
     @FXML private TableView<List<Integer>> shellTable;
     @FXML private Button btnShell;
+
     @FXML private TableView<List<Integer>> linearTable;
     @FXML private Button btnLinear;
-    @FXML private TableView<List<Integer>> infoTable;
-    @FXML private Button btnInfo;
-    @FXML private Spinner<Integer> spinnerLength;
 
+    @FXML private TableView<InfoAboutSort> infoTable;    
+    @FXML private TableColumn<InfoAboutSort, String> nameSorting;
+    @FXML private TableColumn<InfoAboutSort, Double> countCompare;
+    @FXML private TableColumn<InfoAboutSort, Double> countSwap;
+    @FXML private TableColumn<InfoAboutSort, Double> time;
+    @FXML private Button btnInfo;
+
+    @FXML private Spinner<Integer> spinnerLength;
+    
     @FXML
     void initialize() {
         spinnerLength.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(500, 10000, 500, 500));
+
+        nameSorting.setCellValueFactory(new PropertyValueFactory<InfoAboutSort, String>("nameSorting"));
+        countCompare.setCellValueFactory(new PropertyValueFactory<InfoAboutSort, Double>("countCompare"));
+        countSwap.setCellValueFactory(new PropertyValueFactory<InfoAboutSort, Double>("countSwap"));
+        time.setCellValueFactory(new PropertyValueFactory<InfoAboutSort, Double>("time"));
 
         btnBubble.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
             int[] array = generateArray(20, 1, 100);
@@ -67,7 +81,28 @@ public class AppController {
             int[] array = generateArray(10, 1, 9);
             fillTable(linearTable, SolutionWithInfo::LinearSort, array);
         });
-        
+
+        btnInfo.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
+            infoTable.getItems().clear();
+            ObservableList<InfoAboutSort> rows = FXCollections.observableArrayList();
+
+            int size = spinnerLength.getValue();
+            int[] arr = generateArray(size, 1, 100);
+
+            double[] infoBubble = Solution.bubbleSortBidirectional(arr.clone());
+            double[] infoSelect = Solution.selectionSort(arr.clone());
+            double[] infoInsert = Solution.sortbByInserts(arr.clone());
+            double[] infoShell = Solution.sortShell(arr.clone());
+            double[] infoLinear = Solution.linearSort(arr.clone());
+
+            rows.add(InfoAboutSort.create("Обмен", infoBubble));
+            rows.add(InfoAboutSort.create("Выбор", infoSelect));
+            rows.add(InfoAboutSort.create("Вставка", infoInsert));
+            rows.add(InfoAboutSort.create("Шелла", infoShell));
+            rows.add(InfoAboutSort.create("Линейнная", infoLinear));
+
+            infoTable.setItems(rows);
+        });
     }
 
     private void fillTable(TableView<List<Integer>> table, SortMethod method, int[] array) {
